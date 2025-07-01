@@ -1,9 +1,14 @@
-function App() {
+import { Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import TripDashboard from "./pages/TripDashboard"; // if created
+
+export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-teal-400 to-purple-600 text-white text-3xl font-bold">
-      ✅ Tailwind is finally working!
-    </div>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/dashboard" element={<TripDashboard />} />
+    </Routes>
   );
 }
-
-export default App;
