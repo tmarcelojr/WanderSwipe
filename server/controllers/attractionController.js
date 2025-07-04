@@ -1,50 +1,53 @@
-const Attraction = require("../models/Attraction");
+import asyncHandler from "../middleware/asyncHandler.js";
+import Attraction from "../models/Attraction.js";
 
-exports.addAttraction = async (req, res) => {
-  try {
-    const { name, description, image, tripId } = req.body;
-    const attraction = new Attraction({
-      name,
-      description,
-      image,
-      trip: tripId,
-    });
-    await attraction.save();
-    res.status(201).json(attraction);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to add attraction" });
+// @desc    Get all attractions
+// @route   GET /api/attractions
+// @access  Private
+export const getAllAttractions = asyncHandler(async (req, res) => {
+  const attractions = await Attraction.find().populate("trip");
+  res.status(200).json(attractions);
+});
+
+// @desc    Get a single attraction by ID
+// @route   GET /api/attractions/:id
+// @access  Private
+export const getAttractionById = asyncHandler(async (req, res) => {
+  const attraction = await Attraction.findById(req.params.id).populate("trip");
+
+  if (!attraction) {
+    res.status(404);
+    throw new Error("Attraction not found");
   }
-};
 
-exports.voteAttraction = async (req, res) => {
-  try {
-    const { attractionId } = req.params;
-    const { vote } = req.body;
-    const userId = req.user;
+  res.status(200).json(attraction);
+});
 
-    const attraction = await Attraction.findById(attractionId);
-    const existingVote = attraction.votes.find(
-      (v) => v.user.toString() === userId
-    );
+// @desc    Swipe (vote) on an attraction
+// @route   POST /api/attractions/:id/swipe
+// @access  Private
+export const swipeAttraction = asyncHandler(async (req, res) => {
+  const { vote } = req.body; // 'like' or 'dislike'
+  const userId = req.user._id;
+  const attraction = await Attraction.findById(req.params.id);
 
-    if (existingVote) {
-      existingVote.vote = vote;
-    } else {
-      attraction.votes.push({ user: userId, vote });
-    }
-
-    await attraction.save();
-    res.json(attraction);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to cast vote" });
+  if (!attraction) {
+    res.status(404);
+    throw new Error("Attraction not found");
   }
-};
 
-exports.getAttractionsByTrip = async (req, res) => {
-  try {
-    const attractions = await Attraction.find({ trip: req.params.tripId });
-    res.json(attractions);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch attractions" });
+  const existingVoteIndex = attraction.votes.findIndex(
+    (v) => v.user.toString() === userId.toString()
+  );
+
+  if (existingVoteIndex > -1) {
+    // Update existing vote
+    attraction.votes[existingVoteIndex].vote = vote;
+  } else {
+    // Add new vote
+    attraction.votes.push({ user: userId, vote });
   }
-};
+
+  await attraction.save();
+  res.status(200).json({ message: `Vote '${vote}' recorded.` });
+});

@@ -5,28 +5,41 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import tripRoutes from "./routes/trips.js";
 import favoriteRoutes from "./routes/favorites.js";
+import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 dotenv.config();
 
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Health check
+app.get("/__ping", (req, res) => res.send("Server is alive"));
+
+// API routes
+app.use("/api/auth", authRoutes);
+app.use("/api/trips", tripRoutes);
+app.use("/api/favorites", favoriteRoutes);
+
+// Error handling
+app.use(notFound);
+app.use(errorHandler);
+
+// Start the server
+const PORT = process.env.PORT || 5050;
+
 const startServer = async () => {
-  await connectDB(); // wait for DB to connect
-
-  const app = express();
-
-  app.use(cors());
-  app.use(express.json());
-
-  app.get("/__ping", (req, res) => res.send("✅ Server is alive"));
-  app.get("/test-direct", (req, res) => res.send("🔥 Direct route working"));
-
-  app.use("/api/auth", authRoutes);
-  app.use("/api/trips", tripRoutes);
-  app.use("/api/favorites", favoriteRoutes);
-
-  const PORT = process.env.PORT || 5050;
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err);
+    process.exit(1);
+  }
 };
 
 startServer();

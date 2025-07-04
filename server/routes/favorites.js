@@ -1,19 +1,19 @@
 import express from "express";
-import Favorite from "../models/Favorite.js";
+import {
+  addFavorite,
+  getFavorites,
+  removeFavorite,
+} from "../controllers/favoriteController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// POST /api/favorites
-router.post("/", async (req, res) => {
-  try {
-    const { userId, tripId } = req.body;
-    const favorite = await Favorite.create({ userId, tripId });
-    res.status(201).json(favorite);
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to save favorite", error: err.message });
-  }
-});
+// Apply protect to ALL routes after this line
+router.use(protect);
+
+// Protected favorite routes
+router.post("/", addFavorite);
+router.get("/", getFavorites);
+router.delete("/:id", removeFavorite);
 
 export default router;
