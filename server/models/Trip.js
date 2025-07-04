@@ -6,10 +6,13 @@ const tripSchema = new mongoose.Schema(
     location: { type: String, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
-    coverPhotoUrl: { type: String },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-const Trip = mongoose.model("Trip", tripSchema);
-export default Trip;
+export default mongoose.model("Trip", tripSchema);
