@@ -1,100 +1,96 @@
 import Trip from "../models/Trip.js";
+import asyncHandler from "../middleware/asyncHandler.js";
 
-export const createTrip = async (req, res) => {
-  try {
-    const { title, location, startDate, endDate } = req.body;
+// @desc    Create a new trip
+// @route   POST /api/trips/create
+// @access  Private
+export const createTrip = asyncHandler(async (req, res) => {
+  const { title, location, startDate, endDate } = req.body;
 
-    // Optional: Use req.user from the protect middleware if needed
-    const newTrip = new Trip({
-      title,
-      location,
-      startDate,
-      endDate,
-      createdBy: req.user, // assuming you want to associate it with a user
-    });
+  const newTrip = new Trip({
+    title,
+    location,
+    startDate,
+    endDate,
+    createdBy: req.user,
+  });
 
-    await newTrip.save();
+  const savedTrip = await newTrip.save();
+  res.status(201).json(savedTrip);
+});
 
-    res.status(201).json(newTrip);
-  } catch (err) {
-    console.error("❌ Create Trip error:", err);
-    res.status(500).json({ message: "Server error" });
+// @desc    Get all trips by the logged-in user
+// @route   GET /api/trips/my-trips
+// @access  Private
+export const getUserTrips = asyncHandler(async (req, res) => {
+  const trips = await Trip.find({ createdBy: req.user }).sort({
+    createdAt: -1,
+  });
+  res.status(200).json(trips);
+});
+
+// @desc    Get a single trip by ID
+// @route   GET /api/trips/:id
+// @access  Private
+export const getTripById = asyncHandler(async (req, res) => {
+  const trip = await Trip.findById(req.params.id);
+
+  if (!trip) {
+    res.status(404);
+    throw new Error("Trip not found");
   }
-};
 
-export const getUserTrips = async (req, res) => {
-  try {
-    const trips = await Trip.find({ createdBy: req.user });
-    res.status(200).json(trips);
-  } catch (err) {
-    console.error("❌ Get Trips error:", err);
-    res.status(500).json({ message: "Server error" });
+  if (trip.createdBy.toString() !== req.user) {
+    res.status(403);
+    throw new Error("Not authorized to view this trip");
   }
-};
 
-export const getTripById = async (req, res) => {
-  try {
-    const trip = await Trip.findById(req.params.id);
+  res.status(200).json(trip);
+});
 
-    if (!trip) return res.status(404).json({ message: "Trip not found" });
+// @desc    Update a trip by ID
+// @route   PUT /api/trips/:id
+// @access  Private
+export const updateTripById = asyncHandler(async (req, res) => {
+  const trip = await Trip.findById(req.params.id);
 
-    if (trip.createdBy.toString() !== req.user) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to view this trip" });
-    }
-
-    res.status(200).json(trip);
-  } catch (err) {
-    console.error("❌ Get Trip by ID error:", err);
-    res.status(500).json({ message: "Server error" });
+  if (!trip) {
+    res.status(404);
+    throw new Error("Trip not found");
   }
-};
 
-export const updateTripById = async (req, res) => {
-  try {
-    const trip = await Trip.findById(req.params.id);
-
-    if (!trip) return res.status(404).json({ message: "Trip not found" });
-
-    if (trip.createdBy.toString() !== req.user) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to update this trip" });
-    }
-
-    const { title, location, startDate, endDate } = req.body;
-
-    trip.title = title || trip.title;
-    trip.location = location || trip.location;
-    trip.startDate = startDate || trip.startDate;
-    trip.endDate = endDate || trip.endDate;
-
-    const updatedTrip = await trip.save();
-    res.status(200).json(updatedTrip);
-  } catch (err) {
-    console.error("❌ Update Trip error:", err);
-    res.status(500).json({ message: "Server error" });
+  if (trip.createdBy.toString() !== req.user) {
+    res.status(403);
+    throw new Error("Not authorized to update this trip");
   }
-};
 
-export const deleteTripById = async (req, res) => {
-  try {
-    const trip = await Trip.findById(req.params.id);
+  const { title, location, startDate, endDate } = req.body;
 
-    if (!trip) return res.status(404).json({ message: "Trip not found" });
+  trip.title = title || trip.title;
+  trip.location = location || trip.location;
+  trip.startDate = startDate || trip.startDate;
+  trip.endDate = endDate || trip.endDate;
 
-    if (trip.createdBy.toString() !== req.user) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to delete this trip" });
-    }
+  const updatedTrip = await trip.save();
+  res.status(200).json(updatedTrip);
+});
 
-    await trip.deleteOne();
-    res.status(200).json({ message: "Trip deleted successfully" });
-  } catch (err) {
-    console.error("❌ Delete Trip error:", err);
-    res.status(500).json({ message: "Server error" });
+// @desc    Delete a trip by ID
+// @route   DELETE /api/trips/:id
+// @access  Private
+export const deleteTripById = asyncHandler(async (req, res) => {
+  const trip = await Trip.findById(req.params.id);
+
+  if (!trip) {
+    res.status(404);
+    throw new Error("Trip not found");
   }
-};
 
+  if (trip.createdBy.toString() !== req.user) {
+    res.status(403);
+    throw new Error("Not authorized to delete this trip");
+  }
+
+  await trip.deleteOne();
+  res.status(200).json({ message: "Trip deleted successfully" });
+});
