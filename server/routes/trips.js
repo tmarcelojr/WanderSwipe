@@ -20,4 +20,15 @@ router.get("/:id", getTripById);
 router.put("/:id", updateTripById);
 router.delete("/:id", deleteTripById);
 
+// Get attractions for a trip
+router.get('/:tripId/attractions', async (req, res) => {
+  const { tripId } = req.params;
+  // TODO: Fetch attractions from DB
+  res.json([
+    { id: '1', name: 'Statue of Liberty', image: '/images/statue.jpg' },
+    { id: '2', name: 'Central Park', image: '/images/central-park.jpg' },
+    { id: '3', name: 'Times Square', image: '/images/times-square.jpg' },
+  ]);
+});
+
 export default router;

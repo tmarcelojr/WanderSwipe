@@ -2,9 +2,12 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+
 import authRoutes from "./routes/auth.js";
 import tripRoutes from "./routes/trips.js";
 import favoriteRoutes from "./routes/favorites.js";
+import voteRoutes from "./routes/votes.js";
+
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -22,6 +25,7 @@ app.get("/__ping", (req, res) => res.send("Server is alive"));
 app.use("/api/auth", authRoutes);
 app.use("/api/trips", tripRoutes);
 app.use("/api/favorites", favoriteRoutes);
+app.use("/api/votes", voteRoutes);
 
 // Error handling
 app.use(notFound);

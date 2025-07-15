@@ -31,6 +31,12 @@ This project is built using the MERN stack with modern tools like Vite and Tailw
 ```
 WanderSwipe/
 ├── client/             # Frontend (React + Vite)
+│   ├── src/
+│   │   ├── pages/
+│   │   │   └── TripCreatePage.jsx   # Trip creation form
+│   │   ├── components/              # Reusable components
+│   │   ├── index.css                # Tailwind CSS entry
+│   │   └── ...
 ├── server/             # Backend (Node + Express + MongoDB)
 ├── .gitignore
 ├── README.md           # Project documentation
@@ -97,6 +103,7 @@ App will be available at:
 - Swipe-style voting (like/dislike)
 - Save favorites
 - Route protection with middleware
+- Tailwind CSS setup with Vite (remember to only use `@import "tailwindcss";` in `index.css`, no `@tailwind` directives)
 
 ## API Overview
 
@@ -134,3 +141,7 @@ You can test all routes using Postman:
 2. Create a new branch (`git checkout -b feature/your-feature`)
 3. Make your changes
 4. Open a pull request
+
+## License
+
+MIT © Teo Marcelo

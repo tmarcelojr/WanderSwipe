@@ -28,7 +28,19 @@ export default function LoginPage() {
         throw new Error("Invalid response from server");
       }
 
+      // Save user + token
       login(data.user, data.token);
+
+      // ✅ Test /me right after login
+      const meRes = await fetch("http://localhost:5050/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+      });
+
+      const meData = await meRes.json();
+      console.log("/api/auth/me response:", meData);
+
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Login failed");
