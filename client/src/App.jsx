@@ -4,6 +4,7 @@ import RegisterPage from "./pages/RegisterPage";
 import TripDashboard from "./pages/TripDashboard";
 import TripCreatePage from "./pages/TripCreatePage";
 import SwipeView from "./components/SwipeView";
+import TripDetailsPage from "./pages/TripDetailsPage";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/dashboard" element={<TripDashboard />} />
       <Route path="/trip/new" element={<TripCreatePage />} />
+      <Route path="/trip/:id" element={<TripDetailsPage />} />
       <Route path="/swipe" element={<SwipeView />} />
     </Routes>
   );

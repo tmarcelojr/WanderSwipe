@@ -7,12 +7,17 @@ import asyncHandler from "../middleware/asyncHandler.js";
 export const createTrip = asyncHandler(async (req, res) => {
   const { title, location, startDate, endDate } = req.body;
 
+  if (!title || !location || !startDate || !endDate) {
+    res.status(400);
+    throw new Error("Missing required fields");
+  }
+
   const newTrip = new Trip({
     title,
     location,
     startDate,
     endDate,
-    createdBy: req.user,
+    createdBy: req.user, // user id string
   });
 
   const savedTrip = await newTrip.save();

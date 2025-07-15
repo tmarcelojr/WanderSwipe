@@ -10,8 +10,8 @@ export const protect = (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Attach the decoded object to req.user (just ID here)
-    req.user = { id: decoded.id };
+    // Set user as string id
+    req.user = decoded.id;
 
     next();
   } catch (err) {
