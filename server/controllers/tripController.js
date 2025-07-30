@@ -1,9 +1,11 @@
 import Trip from "../models/Trip.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 
-// @desc    Create a new trip
-// @route   POST /api/trips/create
-// @access  Private
+/**
+ * // @desc    Create a new trip
+ * // @route   POST /api/trips/create
+ * // @access  Private
+ */
 export const createTrip = asyncHandler(async (req, res) => {
   const { title, location, startDate, endDate } = req.body;
 
@@ -17,26 +19,30 @@ export const createTrip = asyncHandler(async (req, res) => {
     location,
     startDate,
     endDate,
-    createdBy: req.user, // user id string
+    createdBy: req.user._id,
   });
 
   const savedTrip = await newTrip.save();
   res.status(201).json(savedTrip);
 });
 
-// @desc    Get all trips by the logged-in user
-// @route   GET /api/trips/my-trips
-// @access  Private
+/**
+ * // @desc    Get all trips by the logged-in user
+ * // @route   GET /api/trips/my-trips
+ * // @access  Private
+ */
 export const getUserTrips = asyncHandler(async (req, res) => {
-  const trips = await Trip.find({ createdBy: req.user }).sort({
+  const trips = await Trip.find({ createdBy: req.user._id }).sort({
     createdAt: -1,
   });
   res.status(200).json(trips);
 });
 
-// @desc    Get a single trip by ID
-// @route   GET /api/trips/:id
-// @access  Private
+/**
+ * // @desc    Get a single trip by ID
+ * // @route   GET /api/trips/:id
+ * // @access  Private
+ */
 export const getTripById = asyncHandler(async (req, res) => {
   const trip = await Trip.findById(req.params.id);
 
@@ -45,7 +51,7 @@ export const getTripById = asyncHandler(async (req, res) => {
     throw new Error("Trip not found");
   }
 
-  if (trip.createdBy.toString() !== req.user) {
+  if (trip.createdBy.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error("Not authorized to view this trip");
   }
@@ -53,9 +59,11 @@ export const getTripById = asyncHandler(async (req, res) => {
   res.status(200).json(trip);
 });
 
-// @desc    Update a trip by ID
-// @route   PUT /api/trips/:id
-// @access  Private
+/**
+ * // @desc    Update a trip by ID
+ * // @route   PUT /api/trips/:id
+ * // @access  Private
+ */
 export const updateTripById = asyncHandler(async (req, res) => {
   const trip = await Trip.findById(req.params.id);
 
@@ -64,7 +72,7 @@ export const updateTripById = asyncHandler(async (req, res) => {
     throw new Error("Trip not found");
   }
 
-  if (trip.createdBy.toString() !== req.user) {
+  if (trip.createdBy.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error("Not authorized to update this trip");
   }
@@ -80,9 +88,11 @@ export const updateTripById = asyncHandler(async (req, res) => {
   res.status(200).json(updatedTrip);
 });
 
-// @desc    Delete a trip by ID
-// @route   DELETE /api/trips/:id
-// @access  Private
+/**
+ * // @desc    Delete a trip by ID
+ * // @route   DELETE /api/trips/:id
+ * // @access  Private
+ */
 export const deleteTripById = asyncHandler(async (req, res) => {
   const trip = await Trip.findById(req.params.id);
 
@@ -91,7 +101,7 @@ export const deleteTripById = asyncHandler(async (req, res) => {
     throw new Error("Trip not found");
   }
 
-  if (trip.createdBy.toString() !== req.user) {
+  if (trip.createdBy.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error("Not authorized to delete this trip");
   }

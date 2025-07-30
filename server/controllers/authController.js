@@ -4,9 +4,11 @@ import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
+/**
+ * // @desc    Register a new user
+ * // @route   POST /api/auth/register
+ * // @access  Public
+ */
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -33,9 +35,11 @@ export const register = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Authenticate user & get token
-// @route   POST /api/auth/login
-// @access  Public
+/**
+ * // @desc    Authenticate user & get token
+ * // @route   POST /api/auth/login
+ * // @access  Public
+ */
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -63,9 +67,11 @@ export const login = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Get current logged-in user
-// @route   GET /api/auth/me
-// @access  Private
+/**
+ * // @desc    Get current logged-in user
+ * // @route   GET /api/auth/me
+ * // @access  Private
+ */
 export const getCurrentUser = asyncHandler(async (req, res) => {
   res.status(200).json(req.user);
 });

@@ -6,29 +6,46 @@ import {
   updateTripById,
   deleteTripById,
 } from "../controllers/tripController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
-// Apply protect to ALL routes after this line
+// Apply auth middleware to all routes
 router.use(protect);
 
-// Protected trip routes
+/**
+ * // @desc    Create a new trip
+ * // @route   POST /api/trips/create
+ * // @access  Private
+ */
 router.post("/create", createTrip);
-router.get("/my-trips", getUserTrips);
-router.get("/:id", getTripById);
-router.put("/:id", updateTripById);
-router.delete("/:id", deleteTripById);
 
-// Get attractions for a trip
-router.get('/:tripId/attractions', async (req, res) => {
-  const { tripId } = req.params;
-  // TODO: Fetch attractions from DB
-  res.json([
-    { id: '1', name: 'Statue of Liberty', image: '/images/statue.jpg' },
-    { id: '2', name: 'Central Park', image: '/images/central-park.jpg' },
-    { id: '3', name: 'Times Square', image: '/images/times-square.jpg' },
-  ]);
-});
+/**
+ * // @desc    Get all trips for the logged-in user
+ * // @route   GET /api/trips/my-trips
+ * // @access  Private
+ */
+router.get("/my-trips", getUserTrips);
+
+/**
+ * // @desc    Get a single trip by ID
+ * // @route   GET /api/trips/:id
+ * // @access  Private
+ */
+router.get("/:id", getTripById);
+
+/**
+ * // @desc    Update a trip by ID
+ * // @route   PUT /api/trips/:id
+ * // @access  Private
+ */
+router.put("/:id", updateTripById);
+
+/**
+ * // @desc    Delete a trip by ID
+ * // @route   DELETE /api/trips/:id
+ * // @access  Private
+ */
+router.delete("/:id", deleteTripById);
 
 export default router;

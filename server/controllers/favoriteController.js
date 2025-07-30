@@ -1,9 +1,11 @@
 import Favorite from "../models/Favorite.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 
-// @desc    Get favorites (filter by userId and/or tripId)
-// @route   GET /api/favorites
-// @access  Private
+/**
+ * // @desc    Get favorites (filter by userId and/or tripId)
+ * // @route   GET /api/favorites
+ * // @access  Private
+ */
 export const getFavorites = asyncHandler(async (req, res) => {
   const { userId, tripId } = req.query;
   const query = {};
@@ -20,9 +22,11 @@ export const getFavorites = asyncHandler(async (req, res) => {
   res.status(200).json(favorites);
 });
 
-// @desc    Add or update a favorite vote
-// @route   POST /api/favorites
-// @access  Private
+/**
+ * // @desc    Add or update a favorite vote
+ * // @route   POST /api/favorites
+ * // @access  Private
+ */
 export const addOrUpdateFavorite = asyncHandler(async (req, res) => {
   const { userId, tripId, attractionId, vote } = req.body;
 
@@ -44,9 +48,11 @@ export const addOrUpdateFavorite = asyncHandler(async (req, res) => {
   res.status(201).json(savedFavorite);
 });
 
-// @desc    Delete a favorite by ID
-// @route   DELETE /api/favorites/:id
-// @access  Private
+/**
+ * // @desc    Delete a favorite by ID
+ * // @route   DELETE /api/favorites/:id
+ * // @access  Private
+ */
 export const deleteFavoriteById = asyncHandler(async (req, res) => {
   const favorite = await Favorite.findById(req.params.id);
 

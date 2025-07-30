@@ -6,25 +6,25 @@ This project is built using the MERN stack with modern tools like Vite and Tailw
 
 ## Table of Contents
 
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Running the Application](#running-the-application)
-- [Core Features](#core-features)
-- [API Overview](#api-overview)
-- [Authentication](#authentication)
-- [Testing with Postman](#testing-with-postman)
-- [Contributing](#contributing)
-- [License](#license)
+* [Tech Stack](#tech-stack)
+* [Project Structure](#project-structure)
+* [Getting Started](#getting-started)
+* [Environment Variables](#environment-variables)
+* [Running the Application](#running-the-application)
+* [Core Features](#core-features)
+* [API Overview](#api-overview)
+* [Authentication](#authentication)
+* [Testing with Postman](#testing-with-postman)
+* [Contributing](#contributing)
+* [License](#license)
 
 ## Tech Stack
 
-- Frontend: React, Vite, Tailwind CSS
-- Backend: Node.js, Express
-- Database: MongoDB with Mongoose
-- Authentication: JWT with bcrypt
-- Dev Tools: Postman, Nodemon, dotenv
+* Frontend: React, Vite, Tailwind CSS
+* Backend: Node.js, Express
+* Database: MongoDB with Mongoose
+* Authentication: JWT with bcrypt
+* Dev Tools: Postman, Nodemon, dotenv
 
 ## Project Structure
 
@@ -38,6 +38,11 @@ WanderSwipe/
 │   │   ├── index.css                # Tailwind CSS entry
 │   │   └── ...
 ├── server/             # Backend (Node + Express + MongoDB)
+│   ├── controllers/    # All controllers use /** */ doc blocks
+│   ├── routes/         # Modular routes
+│   ├── middleware/     # auth, async, and error handling
+│   ├── utils/          # Reusable utilities like token and ownership checks
+│   └── models/
 ├── .gitignore
 ├── README.md           # Project documentation
 ```
@@ -91,33 +96,64 @@ npm run dev
 
 App will be available at:
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:5050
+* Frontend: [http://localhost:5173](http://localhost:5173)
+* Backend: [http://localhost:5050](http://localhost:5050)
 
 ## Core Features
 
-- JWT-based user authentication
-- Secure registration and login
-- Create, update, delete trips
-- Add attractions to trips
-- Swipe-style voting (like/dislike)
-- Save favorites
-- Route protection with middleware
-- Tailwind CSS setup with Vite (remember to only use `@import "tailwindcss";` in `index.css`, no `@tailwind` directives)
+* JWT-based user authentication
+* Secure registration and login
+* Create, update, delete trips
+* Add attractions to trips
+* Swipe-style voting (like/dislike)
+* Save favorites
+* Role-protected routes using `protect` middleware
+* Consistent `/** */` blocks across controllers and middleware (Swagger/apidoc-compatible)
+* Ownership checking via `checkOwnership()` util
+* Modular controller structure
 
 ## API Overview
 
-| Method | Endpoint                     | Description                     |
-|--------|------------------------------|---------------------------------|
-| POST   | /api/auth/register           | Register a user                |
-| POST   | /api/auth/login              | Log in a user                  |
-| GET    | /api/trips/my-trips          | Get trips for logged-in user   |
-| POST   | /api/trips/create            | Create a new trip              |
-| GET    | /api/trips/:id               | Get trip by ID                 |
-| PUT    | /api/trips/:id               | Update a trip                  |
-| DELETE | /api/trips/:id               | Delete a trip                  |
-| POST   | /api/attractions/:id/swipe   | Like or dislike an attraction  |
-| GET    | /api/favorites               | Get user's favorite attractions |
+### Auth Routes
+
+| Method | Endpoint           | Description      |
+| ------ | ------------------ | ---------------- |
+| POST   | /api/auth/register | Register a user  |
+| POST   | /api/auth/login    | Log in a user    |
+| GET    | /api/auth/me       | Get current user |
+
+### Trip Routes
+
+| Method | Endpoint            | Description            |
+| ------ | ------------------- | ---------------------- |
+| GET    | /api/trips/my-trips | Get all trips for user |
+| POST   | /api/trips/create   | Create a new trip      |
+| GET    | /api/trips/\:id     | Get trip by ID         |
+| PUT    | /api/trips/\:id     | Update a trip          |
+| DELETE | /api/trips/\:id     | Delete a trip          |
+
+### Attraction Routes
+
+| Method | Endpoint                          | Description                         |
+| ------ | --------------------------------- | ----------------------------------- |
+| GET    | /api/attractions                  | Get all attractions                 |
+| GET    | /api/attractions/\:id             | Get single attraction               |
+| GET    | /api/attractions/by-trip/\:tripId | Get attractions for a specific trip |
+| POST   | /api/attractions/\:id/swipe       | Swipe (like/dislike) an attraction  |
+
+### Favorites Routes
+
+| Method | Endpoint            | Description                |
+| ------ | ------------------- | -------------------------- |
+| GET    | /api/favorites      | Get user’s favorites       |
+| POST   | /api/favorites      | Add/update a favorite vote |
+| DELETE | /api/favorites/\:id | Delete a favorite by ID    |
+
+### Vote Routes
+
+| Method | Endpoint   | Description              |
+| ------ | ---------- | ------------------------ |
+| POST   | /api/votes | Submit a vote (internal) |
 
 ## Authentication
 
@@ -133,7 +169,7 @@ You can test all routes using Postman:
 
 1. Set `Content-Type: application/json`
 2. Use `Bearer <token>` for protected routes
-3. Example test route: `GET http://localhost:5050/__ping`
+3. Example test route: `GET http://localhost:5050/api/trips/my-trips`
 
 ## Contributing
 

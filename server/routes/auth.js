@@ -4,14 +4,29 @@ import {
   register,
   getCurrentUser,
 } from "../controllers/authController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
-router.post("/login", login);
+/**
+ * // @desc    Register a new user
+ * // @route   POST /api/auth/register
+ * // @access  Public
+ */
 router.post("/register", register);
 
-// This route now requires a valid JWT
+/**
+ * // @desc    Login and retrieve JWT
+ * // @route   POST /api/auth/login
+ * // @access  Public
+ */
+router.post("/login", login);
+
+/**
+ * // @desc    Get currently logged-in user
+ * // @route   GET /api/auth/me
+ * // @access  Private
+ */
 router.get("/me", protect, getCurrentUser);
 
 export default router;

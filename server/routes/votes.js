@@ -3,9 +3,11 @@ import Vote from "../models/Vote.js";
 
 const router = express.Router();
 
-// @desc    Submit a vote
-// @route   POST /api/votes
-// @access  Public (for now, until protected)
+/**
+ * // @desc    Submit a vote for an attraction in a trip
+ * // @route   POST /api/votes
+ * // @access  Public (can be protected later)
+ */
 router.post("/", async (req, res) => {
   const { userId, tripId, attractionId, vote } = req.body;
 
